@@ -9,7 +9,7 @@
     "lint": "oxlint",
     "preview": "vite preview",
     "app": "npm run build && electron .",
-    "app:dist": "npm run build && electron-builder --mac"
+    "app:dist": "npm run build && electron-builder --publish never"
   },
   "dependencies": {
     "http-proxy": "^1.18.1"
@@ -37,6 +37,7 @@
   "build": {
     "appId": "jp.trap.modern-traq",
     "productName": "traQ",
+    "artifactName": "${productName}-${version}-${os}-${arch}.${ext}",
     "files": [
       "dist/**",
       "electron/**",
@@ -47,10 +48,19 @@
     },
     "mac": {
       "target": [
-        "dir"
+        "dmg"
       ],
       "category": "public.app-category.social-networking",
-      "identity": null,
+      "identity": "-",
+      "hardenedRuntime": false,
+      "notarize": false,
+      "icon": "build/icon.png"
+    },
+    "win": {
+      "target": [
+        "nsis"
+      ],
+      "signExecutable": false,
       "icon": "build/icon.png"
     }
   }

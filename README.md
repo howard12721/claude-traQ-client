@@ -14,10 +14,23 @@ TRAQ_ORIGIN=http://localhost:3000 npm run dev     # ローカルの traQ に接�
 
 ```bash
 npm run app        # ビルドしてそのままアプリとして起動
-npm run app:dist   # macOS の .app を release/mac-arm64/traQ.app に作る
+npm run app:dist   # 実行した OS 向けの DMG / Windows インストーラーを release/ に作る
 ```
 
-アプリの中で `localhost:47321` に小さなサーバーを立て、ビルド済みの画面を配信しつつ `/api` (WebSocket 含む) を `TRAQ_ORIGIN` (既定 `https://q.trap.jp`) へ中継します。開発サーバーと同じ構成なので、ログイン状態はアプリ内に保存されます。外部リンクは既定のブラウザで開きます。アプリとタブのアイコンは q.trap.jp と同じもの (`public/img/icons`, `build/icon.png`) です。署名していないので、ほかの Mac では初回だけ右クリック →「開く」が必要です。
+アプリの中で `localhost:47321` に小さなサーバーを立て、ビルド済みの画面を配信しつつ `/api` (WebSocket 含む) を `TRAQ_ORIGIN` (既定 `https://q.trap.jp`) へ中継します。開発サーバーと同じ構成なので、ログイン状態はアプリ内に保存されます。外部リンクは既定のブラウザで開きます。アプリとタブのアイコンは q.trap.jp と同じもの (`public/img/icons`, `build/icon.png`) です。
+
+### リリース
+
+GitHub Actions の `Release desktop apps` が、Windows x64 の `.exe` と macOS の Intel (`x64`) / Apple Silicon (`arm64`) 向け `.dmg` をビルドします。`v` で始まるバージョンタグを push すると、すべてのビルドが成功した後に [GitHub Releases](https://github.com/howard12721/claude-traQ-client/releases) へ公開します。
+
+```bash
+npm version patch                    # package.json / lockfile の更新、コミット、タグ作成
+git push origin main --follow-tags
+```
+
+タグは `v` + `package.json` のバージョンと一致する必要があります。`v0.1.0-beta.1` のようなタグはプレリリースとして公開します。ビルドだけ確認する場合は Actions から `Run workflow` を実行し、完了後の Artifacts から取得できます（手動実行では Releases に公開しません）。公開には標準の `GITHUB_TOKEN` を使うため、追加の Secrets は不要です。
+
+Windows 版は未署名、macOS 版はアドホック署名のみで Apple の公証は行っていません。配布用証明書による署名がないため、初回起動時に SmartScreen / Gatekeeper の警告やブロックが発生する場合があります。
 
 ## 操作
 
